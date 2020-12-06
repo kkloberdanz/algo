@@ -31,7 +31,49 @@ private:
         }
     }
 
-    void set_new_ll(int key, int value) {
+    void do_set(int key, int value) {
+        auto index = hash(key);
+        auto &ll = buckets[index];
+        if (ll.empty()) {
+            Bucket new_bucket;
+            new_bucket.key = key;
+            new_bucket.value = value;
+            ll.assign(1, new_bucket);
+            buckets_used++;
+        } else {
+            auto it = ll.begin();
+            auto before_end = ll.before_begin();
+            for (; it != ll.end(); ++it) {
+                if (it->key == key) {
+                    it->value = value;
+                    return;
+                }
+                before_end++;
+            }
+            Bucket new_bucket;
+            new_bucket.key = key;
+            new_bucket.value = value;
+            ll.insert_after(before_end, new_bucket);
+        }
+    }
+
+    void rebalance() {
+//        std::cout
+//            << "rebalancing: total buckets: " << num_buckets
+//            << ", buckets used: " << buckets_used
+//            << std::endl;
+        auto old_buckets = std::move(buckets);
+        size_t new_size = (num_buckets * 2) | 1;
+        std::vector<std::forward_list<Bucket>> new_vector;
+        buckets = new_vector;
+        buckets.resize(new_size + 1);
+        num_buckets = new_size;
+
+        for (const auto &ll : old_buckets) {
+            for (const auto bucket : ll) {
+                do_set(bucket.key, bucket.value);
+            }
+        }
     }
 
 public:
@@ -47,32 +89,10 @@ public:
     }
 
     void set(int key, int value) {
-        auto index = hash(key);
-        auto &ll = buckets[index];
-        if (ll.empty()) {
-            Bucket new_bucket;
-            new_bucket.key = key;
-            new_bucket.value = value;
-            ll.assign(1, new_bucket);
-            buckets_used++;
-        } else {
-            auto it = ll.begin();
-            auto before_end = ll.before_begin();
-            if (key == 14) {
-                std::cout << "here" << std::endl;
-            }
-            for (; it != ll.end(); ++it) {
-                if (it->key == key) {
-                    it->value = value;
-                    return;
-                }
-                before_end++;
-            }
-            Bucket new_bucket;
-            new_bucket.key = key;
-            new_bucket.value = value;
-            ll.insert_after(before_end, new_bucket);
+        if ((buckets_used * 2) > num_buckets) {
+            rebalance();
         }
+        do_set(key, value);
     }
 
     int get(int key) {
@@ -108,11 +128,12 @@ int main() {
     m.set(1, 4);
     std::cout << m.get(1) << std::endl;
 
-    for (int i = 0; i < 1000; i++) {
+    int nitems = 10000000;
+    for (int i = 0; i < nitems; i++) {
         m.set(i, i);
     }
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < nitems; i++) {
         assert(m.get(i) == i);
     }
 }
