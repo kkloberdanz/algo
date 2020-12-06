@@ -4,19 +4,22 @@
 #include <utility>
 #include <cassert>
 
+template<typename TKey, typename TVal>
 class HashMap {
 private:
     struct Bucket {
-        int key;
-        int value;
+        TKey key;
+        TVal value;
     };
 
     std::vector<std::forward_list<Bucket>> buckets;
 
-    // /!\ must be a bitmask of trailing ones /!\
-    // for hash function optimization to work, which avoids an expensize
-    // idiv instruction (~25 clock cycles on haswell) and instead
-    // does a cheap bitmask (1 clock cycle)
+    /*
+     * /!\ must be a bitmask of trailing ones /!\
+     * for hash function optimization to work, which avoids an expensize
+     * idiv instruction (~25 clock cycles on haswell) and instead
+     * does a cheap bitmask (1 clock cycle)
+     */
     size_t num_buckets;
 
     size_t buckets_used;
@@ -31,7 +34,7 @@ private:
         }
     }
 
-    void do_set(int key, int value) {
+    void do_set(TKey key, TVal value) {
         auto index = hash(key);
         auto &ll = buckets[index];
         if (ll.empty()) {
@@ -63,7 +66,7 @@ private:
 //            << ", buckets used: " << buckets_used
 //            << std::endl;
         auto old_buckets = std::move(buckets);
-        size_t new_size = (num_buckets * 2) | 1;
+        size_t new_size = (num_buckets << 1) | 1;
         std::vector<std::forward_list<Bucket>> new_vector;
         buckets = new_vector;
         buckets.resize(new_size + 1);
@@ -88,14 +91,14 @@ public:
         buckets.resize(num_buckets + 1);
     }
 
-    void set(int key, int value) {
+    void set(TKey key, TVal value) {
         if ((buckets_used * 2) > num_buckets) {
             rebalance();
         }
         do_set(key, value);
     }
 
-    int get(int key) {
+    TVal get(TKey key) {
         auto index = hash(key);
         auto ll = buckets[index];
 
@@ -108,7 +111,7 @@ public:
         throw std::runtime_error("key not found on get");
     }
 
-    int haskey(int key) {
+    bool haskey(TKey key) {
         auto index = hash(key);
         auto ll = buckets[index];
 
@@ -121,30 +124,41 @@ public:
         return false;
     }
 
-    size_t hash(size_t K) {
-        const size_t a = get_prime();
-        K ^= K >> (word_size - num_buckets);
-        K = (a * K) >> (word_size - num_buckets);
-        return K & num_buckets;
+// Donald Knuth multiplicitive hash function, unfortunately this doesn't
+// work well for arbetrary C++ objects. using std::hash instead since that
+// is more standard
+//
+//    size_t hash(size_t K) {
+//        const size_t a = get_prime();
+//        K ^= K >> (word_size - num_buckets);
+//        K = (a * K) >> (word_size - num_buckets);
+//        return K & num_buckets;
+//    }
+
+    size_t hash(TKey K) {
+        size_t h = std::hash<TKey>()(K);
+        size_t idx = h & num_buckets;
+//        std::cout << K << ": " <<  h << " -> " << idx << std::endl;
+        return idx;
     }
 };
 
 #ifdef TEST_HASHMAP
+
 int main() {
-    HashMap m;
+    HashMap<int, int> m;
 
     assert(m.haskey(1) == false);
 
-    /*
-    for (int i = 0; i < 100000; i++) {
-        std::cout << m.hash(i) << std::endl;
-    }
-    */
+//    for (int i = 0; i < 100000; i++) {
+//        std::cout << m.hash(i) << std::endl;
+//    }
+
     m.set(1, 4);
     assert(m.haskey(1) == true);
     std::cout << m.get(1) << std::endl;
 
-    int nitems = 1000000;
+    int nitems = 10000000;
     for (int i = 0; i < nitems; i++) {
         m.set(i, i);
     }
@@ -152,5 +166,13 @@ int main() {
     for (int i = 0; i < nitems; i++) {
         assert(m.get(i) == i);
     }
+
+    HashMap<std::string, int> m2;
+    m2.set("hello", 15);
+    std::cout << m2.get("hello") << std::endl;
+
+    auto k2 = "aweklfajsdlfkjasrkl3ejrkljflkajsdlkfvjxcv lkjxcbvlkjlk";
+    m2.set(k2, 21);
+    std::cout << m2.get(k2) << std::endl;
 }
 #endif
