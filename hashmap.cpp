@@ -108,6 +108,19 @@ public:
         throw std::runtime_error("key not found on get");
     }
 
+    int haskey(int key) {
+        auto index = hash(key);
+        auto ll = buckets[index];
+
+        auto it = ll.begin();
+        for (auto &it : ll) {
+            if (it.key == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     size_t hash(size_t K) {
         const size_t a = get_prime();
         K ^= K >> (word_size - num_buckets);
@@ -120,15 +133,18 @@ public:
 int main() {
     HashMap m;
 
+    assert(m.haskey(1) == false);
+
     /*
     for (int i = 0; i < 100000; i++) {
         std::cout << m.hash(i) << std::endl;
     }
     */
     m.set(1, 4);
+    assert(m.haskey(1) == true);
     std::cout << m.get(1) << std::endl;
 
-    int nitems = 10000000;
+    int nitems = 1000000;
     for (int i = 0; i < nitems; i++) {
         m.set(i, i);
     }
