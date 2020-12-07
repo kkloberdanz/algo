@@ -102,7 +102,6 @@ public:
         auto index = hash(key);
         auto ll = buckets[index];
 
-        auto it = ll.begin();
         for (auto &it : ll) {
             if (it.key == key) {
                 return it.value;
@@ -115,7 +114,6 @@ public:
         auto index = hash(key);
         auto ll = buckets[index];
 
-        auto it = ll.begin();
         for (auto &it : ll) {
             if (it.key == key) {
                 return true;
