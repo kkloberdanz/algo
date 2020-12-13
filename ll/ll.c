@@ -52,13 +52,10 @@ LinkedList *ll_merge(LinkedList *l1, LinkedList *l2) {
 }
 
 void ll_free(LinkedList *head) {
-    if (head) {
-        while (head->next) {
-            LinkedList *next = head->next;
-            free(head);
-            head = next;
-        }
+    while (head) {
+        LinkedList *next = head->next;
         free(head);
+        head = next;
     }
 }
 
