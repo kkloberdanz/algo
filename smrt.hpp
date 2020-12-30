@@ -41,9 +41,11 @@ public:
     }
 
     Smrt &operator=(const Smrt &rhs) {
-        refs = rhs.refs;
-        data = rhs.data;
-        (*refs)++;
+        if (this->data != rhs.data) {
+            refs = rhs.refs;
+            data = rhs.data;
+            (*refs)++;
+        }
         return *this;
     }
 

@@ -17,6 +17,7 @@ Smrt<int> foo() {
     *s2 = -1;
     std::cout << "s1 = " << *s1 << std::endl;
 
+    s1 = s2;
     Smrt<int> s3 = std::move(s2);
     Smrt<int> s4;
 
