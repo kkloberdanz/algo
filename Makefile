@@ -1,5 +1,5 @@
 CXX = g++
-OPT = -O0
+OPT = -O3
 CXXFLAGS = -Wall -Wextra -Wpedantic
 
 .PHONY: all

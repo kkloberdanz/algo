@@ -1,7 +1,7 @@
 #ifndef SMRT_HPP
 #define SMRT_HPP
 
-#include <cstddef>
+#include <atomic>
 
 template<typename T>
 class Smrt {
@@ -13,7 +13,7 @@ public:
 
     Smrt(T *ptr) {
         data = ptr;
-        refs = new size_t;
+        refs = new std::atomic<size_t>;
         *refs = 1;
     }
 
@@ -67,7 +67,7 @@ public:
 
 private:
     T *data;
-    size_t *refs;
+    std::atomic<size_t> *refs;
 };
 
 #endif // SMRT_HPP
