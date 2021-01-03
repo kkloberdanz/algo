@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -44,7 +45,20 @@ void myfree(void *ptr) {
 }
 
 void myputs(const char *msg) {
-    write(1, msg, strlen(msg));
+    size_t bytes_written = 0;
+    size_t total_bytes = strlen(msg);
+    ssize_t ret;
+    if (!total_bytes || !msg) {
+        return;
+    }
+    while (bytes_written < total_bytes) {
+        ret = write(1, msg + bytes_written, total_bytes - bytes_written);
+        if (ret < 0) {
+            /* write to stdout failed, let's get out of here! */
+            exit(-1);
+        }
+        bytes_written += ret;
+    }
 }
 
 int main() {
