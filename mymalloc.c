@@ -37,7 +37,7 @@ void *mymalloc(size_t requested_bytes) {
 void myfree(void *ptr) {
     if (ptr) {
         char *start = (char *)ptr - HEADER_SIZE;
-        size_t nbytes = ((size_t *)start)[0];
+        size_t nbytes = *((size_t *)start);
         /*fprintf(stderr, "%p: unmapping: %zu bytes\n", start, nbytes);*/
         munmap(start, nbytes);
     }
