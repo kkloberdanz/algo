@@ -28,9 +28,11 @@ public:
     }
 
     Smrt(const Smrt &obj) {
-        data = obj.data;
-        refs = obj.refs;
-        (*refs)++;
+        if (this->data != obj.data) {
+            refs = obj.refs;
+            data = obj.data;
+            (*refs)++;
+        }
     }
 
     Smrt(Smrt &&other) {
