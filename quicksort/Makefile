@@ -6,7 +6,7 @@ CXXFLAGS=-Wall -Wextra -Wpedantic $(OPT)
 debug: OPT=-O0 -ggdb3
 debug: quicksort
 
-quicksort: quicksort.cpp
+quicksort: quicksort.cpp quicksort.hpp
 	$(CXX) -o quicksort $(CXXFLAGS) quicksort.cpp
 
 .PHONY: clean
