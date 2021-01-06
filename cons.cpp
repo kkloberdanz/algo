@@ -4,6 +4,12 @@
 class MyClass {
 public:
 
+    MyClass() {
+        this->x = new int;
+        *this->x = 0;
+        std::cout << "constructor (no args): " << (*this->x) << std::endl;
+    }
+
     // constructor
     MyClass(int x) {
         this->x = new int;
@@ -31,6 +37,21 @@ public:
         return *this;
     }
 
+    // move constructor
+    MyClass(MyClass &&rhs) {
+        std::cout << "move constructor" << std::endl;
+        this->x = rhs.x;
+        rhs.x = nullptr;
+    }
+
+    // move assignment
+    MyClass &operator=(MyClass &&rhs) {
+        std::cout << "move assignment" << std::endl;
+        this->x = rhs.x;
+        rhs.x = nullptr;
+        return *this;
+    }
+
     int X() {
         return *x;
     }
@@ -45,6 +66,7 @@ int main() {
     MyClass c(-1);
     std::vector<MyClass> v;
     for (int i = 0; i < 10; i++) {
+        //v.push_back(std::move(MyClass(i)));
         v.push_back(MyClass(i));
     }
 
@@ -53,7 +75,15 @@ int main() {
     std::vector<MyClass> v2;
     v2.reserve(10);
     for (int i = 0; i < 10; i++) {
+        //v2.push_back(std::move(MyClass(i)));
         v2.push_back(MyClass(i));
+    }
+
+    std::cout << "\nresize\n" << std::endl;
+    std::vector<MyClass> v3;
+    v3.resize(10);
+    for (int i = 0; i < 10; i++) {
+        v3.push_back(MyClass(i));
     }
 
     MyClass c2(-4);
