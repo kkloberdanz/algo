@@ -3,18 +3,6 @@
 
 #include "quicksort.hpp"
 
-template <typename T>
-void print_vec(const std::vector<T> &v) {
-    std::cout << "[";
-    if (!v.empty()) {
-        for (size_t i = 0; i < (v.size() - 1); i++) {
-            std::cout << v[i] << ", ";
-        }
-        std::cout << v[v.size()];
-    }
-    std::cout << "]\n";
-}
-
 int main() {
     std::vector<int> v;
     print_vec(v);
@@ -28,4 +16,11 @@ int main() {
     quicksort(v);
 
     print_vec(v);
+
+    std::vector<int> v2 {1,0,4,6,7,345,4,6453,6345634};
+    print_vec(v2);
+    quicksort(v2);
+    print_vec(v2);
+
+    std::cout << "done" << std::endl;
 }
