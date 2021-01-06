@@ -59,6 +59,7 @@ void myputs(const char *msg) {
         }
         bytes_written += ret;
     }
+    putchar('\n');
 }
 
 int main() {
@@ -67,7 +68,7 @@ int main() {
     size_t i;
     size_t j;
 
-    myputs("allocating\n");
+    myputs("allocating");
     for (i = 1; i < SIZE; i++) {
         size_t sz = i * SIZE;
         uint32_t *ptr = mymalloc(sz);
@@ -88,12 +89,12 @@ int main() {
         /*printf("%x\n", ptrs[i][0]);*/
     }
 
-    myputs("freeing\n");
+    myputs("freeing");
     for (i = 1; i < SIZE; i++) {
         myfree(ptrs[i]);
     }
 #   undef SIZE
-    myputs("done, check memory usage while I sleep\n");
+    myputs("done, check memory usage while I sleep");
     sleep(10);
     return 0;
 }
