@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <memory>
 
 template <typename T>
 T func(T a) {
@@ -16,24 +18,19 @@ enum class Bar {
 };
 
 class Base {
-private:
-    int bar() {
-        return 2;
+public:
+    virtual int foo() {
+        return 1;
     }
 
-public:
-    int foo() {
-        return 1;
+    virtual int bar() {
+        return 2;
     }
 };
 
 class Child : public Base {
-private:
-    int bar() {
-        return 3;
-    }
 public:
-    int foo() {
+    int foo() override {
         return 4;
     }
 };
@@ -57,6 +54,17 @@ int main() {
     std::cout << "sizeof(Foo) = " << sizeof(Foo) << std::endl;
     std::cout << "sizeof(Bar) = " << sizeof(Bar) << std::endl;
     std::cout << "sizeof('a') = " << sizeof('a') << std::endl;
+
+
+    std::vector<std::unique_ptr<Base>> v;
+    for (int i = 0; i < 4; i++) {
+        v.push_back(std::make_unique<Child>());
+    }
+
+    for (const auto &it : v) {
+        std::cout << it->foo() << std::endl;
+        std::cout << it->bar() << std::endl;
+    }
 
     Child child;
     std::cout << "child.foo() = " << child.foo() << std::endl;
