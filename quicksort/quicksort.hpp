@@ -34,7 +34,7 @@ template <typename T>
 static void insertionsort(std::vector<T> &v, size_t lo, size_t hi) {
     for (size_t i = lo; i < hi + 1; i++) {
         size_t j = i;
-        while ((j > 0) && (v[j-1] > v[j])) {
+        while ((j > lo) && (v[j-1] > v[j])) {
             std::swap(v[j], v[j-1]);
             j--;
         }
@@ -57,8 +57,8 @@ static void rec_quicksort(std::vector<T> &v, size_t lo, size_t hi) {
 template <typename T>
 void quicksort(std::vector<T> &v) {
     size_t lo = 0;
-    size_t hi = v.size();
-    return rec_quicksort(v, lo, hi - 1);
+    size_t hi = v.size() - 1;
+    return rec_quicksort(v, lo, hi);
 }
 
 #endif // QUICKSORT_HPP
