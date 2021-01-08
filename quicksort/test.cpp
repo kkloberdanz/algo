@@ -35,13 +35,15 @@ BOOST_AUTO_TEST_CASE(test_small) {
     print_vec(v);
 
     quicksort(v);
+    std::vector<int> actual {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    BOOST_CHECK(v == actual);
 
     print_vec(v);
 
     std::vector<int> v2 {1,0,4,6,7,345,4,6453,6345634};
     print_vec(v2);
     quicksort(v2);
+    std::vector<int> actual2 {0, 1, 4, 4, 6, 7, 345, 6453, 6345634};
+    BOOST_CHECK(v2 == actual2);
     print_vec(v2);
-
-    std::cout << "done" << std::endl;
 }
