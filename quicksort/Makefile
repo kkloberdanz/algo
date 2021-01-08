@@ -2,6 +2,9 @@ CXX=g++
 OPT=-O3 -ggdb3
 CXXFLAGS=-Wall -Wextra -Wpedantic $(OPT)
 
+.PHONY: release
+release: quicksort
+
 .PHONY: debug
 debug: OPT=-O0 -ggdb3
 debug: quicksort
