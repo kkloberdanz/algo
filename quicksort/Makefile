@@ -9,6 +9,9 @@ release: quicksort
 debug: OPT=-O0 -ggdb3
 debug: quicksort
 
+test: test.cpp quicksort.hpp
+	$(CXX) -o test test.cpp -lboost_unit_test_framework
+
 quicksort: quicksort.cpp quicksort.hpp
 	$(CXX) -o quicksort $(CXXFLAGS) quicksort.cpp
 
