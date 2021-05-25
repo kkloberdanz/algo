@@ -20,18 +20,18 @@ def fit(X, y):
 
     for i in range(1000):
         y_pred = X.dot(weights)
-        delta = y_pred - y
-        gradient = X.T.dot(delta)
+        residuals = y_pred - y
+        gradient = X.T.dot(residuals)
         # velocity = momentum * velocity - learning_rate * gradient
         # weights += velocity
         weights = weights - learning_rate * gradient
         #learning_rate /= 2 # decay
         if old_mse is None:
-            mse = delta.dot(delta) / n_observations
+            mse = residuals.dot(residuals) / n_observations
             old_mse = mse
         else:
             old_mse = mse
-            mse = delta.dot(delta) / n_observations
+            mse = residuals.dot(residuals) / n_observations
             diff = np.abs(mse - old_mse)
             if diff < tol:
                 print(f"converged after {i} iterations")
