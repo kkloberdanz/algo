@@ -12,7 +12,7 @@ def conjgrad(A, b, epsilon=0.00001):
     p = r.copy()
     residual_old = r.T.dot(r)
 
-    for i in range(N):
+    for i in range(N * N):
         Ap = A.dot(p)
         alpha = residual_old / (p.T.dot(Ap))
         x = x + alpha * p
